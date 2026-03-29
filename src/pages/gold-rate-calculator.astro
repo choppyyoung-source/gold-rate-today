@@ -4,14 +4,11 @@ import BreadcrumbNav from "../components/BreadcrumbNav.astro";
 import AdUnit from "../components/AdUnit.astro";
 import FAQ from "../components/FAQ.astro";
 import Calculator from "../components/Calculator.tsx";
-import { getGoldPrices } from "../utils/goldApi";
 import { getKaratPricesINR } from "../utils/priceCalculator";
 import { formatINR } from "../utils/formatters";
 import { generateWebPageSchema, generateBreadcrumbSchema, generateFAQSchema } from "../utils/schema";
 
-export const prerender = false;
-
-const prices = await getGoldPrices();
+const prices = { xauUsd: 3050, xauInr: 254675, usdInr: 83.5, changeUsd: 12.5, changePct: 0.41, xagUsd: 33.5, silverChangeUsd: 0.25, silverChangePct: 0.75, timestamp: Date.now() };
 const karatINR = getKaratPricesINR(prices);
 
 const title = "Gold Rate Calculator - Calculate Gold Jewelry Price with GST & Making Charges";

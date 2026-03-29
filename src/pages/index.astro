@@ -1,51 +1,52 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import GoldPriceHero from "../components/GoldPriceHero.astro";
-import PriceTable from "../components/PriceTable.astro";
-import CityRatesTable from "../components/CityRatesTable.astro";
 import FAQ from "../components/FAQ.astro";
 import AdUnit from "../components/AdUnit.astro";
 import BreadcrumbNav from "../components/BreadcrumbNav.astro";
+import LivePriceLoader from "../components/LivePriceLoader.tsx";
 import PriceChart from "../components/PriceChart.tsx";
-import { getGoldPrices, getTodayString } from "../utils/goldApi";
-import { generateHistoricalData } from "../utils/priceCalculator";
-import { generateWebPageSchema, generateFAQSchema, generateGoldPriceSchema, generateBreadcrumbSchema } from "../utils/schema";
-import { getKaratPricesINR } from "../utils/priceCalculator";
+import CityRatesTable from "../components/CityRatesTable.astro";
+import { generateWebPageSchema, generateFAQSchema, generateBreadcrumbSchema } from "../utils/schema";
 import { mainPageFAQs } from "../data/faqs";
-import { formatINR } from "../utils/formatters";
+import { generateHistoricalData } from "../utils/priceCalculator";
 
-export const prerender = false;
+const title = "Gold Rate Today - Live 22K & 24K Gold Price in India";
+const description = "Today's live gold rate in India. Track 22K, 24K, 18K gold prices per gram with city-wise rates for 80+ Indian cities. Updated every 5 minutes from international markets.";
 
-const prices = await getGoldPrices();
-const karatINR = getKaratPricesINR(prices);
-const today = getTodayString();
-const historyData = generateHistoricalData(prices.xauUsd, 30);
-
-const title = `Gold Rate Today (${formatINR(karatINR.k22)}/g 22K) - Live Gold Price in India`;
-const description = `Today's gold rate: 22K gold at ${formatINR(karatINR.k22)}/gram and 24K gold at ${formatINR(karatINR.k24)}/gram. Live gold prices in India updated every 5 minutes. Check city-wise rates, price history, and gold calculator.`;
+const historyData = generateHistoricalData(3050, 30);
 
 const schemas = [
   generateWebPageSchema(title, description, "/"),
   generateFAQSchema(mainPageFAQs),
   generateBreadcrumbSchema([{ name: "Gold Rate Today", url: "/" }]),
-  generateGoldPriceSchema(prices, "INR", karatINR.k24),
 ];
 ---
 
 <MainLayout title={title} description={description} canonical="/" schemas={schemas}>
   <BreadcrumbNav items={[{ label: "Gold Rate Today" }]} />
 
-  <GoldPriceHero prices={prices} />
+  <!-- Live Gold Price Hero (Client-side loaded) -->
+  <section class="bg-gradient-to-br from-gold-50 via-white to-gold-50 border border-gold-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+    <div class="text-center mb-6">
+      <p class="text-sm text-gray-500 mb-1" id="today-date"></p>
+      <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Gold Rate Today in India</h1>
+      <p class="text-sm text-gray-500 mt-2">Live 22K & 24K Gold Prices per Gram & per 10 Grams</p>
+    </div>
+    <LivePriceLoader client:load />
+  </section>
+
+  <script>
+    const el = document.getElementById("today-date");
+    if (el) el.textContent = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  </script>
 
   <AdUnit slot="header" format="horizontal" />
-
-  <PriceTable prices={prices} />
 
   <PriceChart client:visible data={historyData} currency="USD" title="Gold Price Chart (30 Days)" />
 
   <AdUnit slot="in-content" />
 
-  <CityRatesTable prices={prices} />
+  <CityRatesTable prices={{ xauUsd: 3050, xauInr: 254675, usdInr: 83.5, changeUsd: 12.5, changePct: 0.41, xagUsd: 33.5, silverChangeUsd: 0.25, silverChangePct: 0.75, timestamp: Date.now() }} />
 
   <!-- Educational Content for SEO/AEO/GEO -->
   <section class="mt-10">
@@ -96,7 +97,6 @@ const schemas = [
 
   <FAQ faqs={mainPageFAQs} />
 
-  <!-- Related Links for internal linking -->
   <section class="mt-8 bg-white border border-gray-200 rounded-lg p-5">
     <h2 class="font-bold text-gray-900 mb-3">Related Gold Rate Pages</h2>
     <div class="flex flex-wrap gap-2">

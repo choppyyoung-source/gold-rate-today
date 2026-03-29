@@ -6,7 +6,6 @@ import CityRatesTable from "../../components/CityRatesTable.astro";
 import FAQ from "../../components/FAQ.astro";
 import AdUnit from "../../components/AdUnit.astro";
 import BreadcrumbNav from "../../components/BreadcrumbNav.astro";
-import { getGoldPrices } from "../../utils/goldApi";
 import { getCityGoldData, getKaratPricesINR } from "../../utils/priceCalculator";
 import { cities, getCityBySlug, getNearbyCities } from "../../data/cities";
 import { getCityFAQs } from "../../data/faqs";
@@ -18,15 +17,14 @@ import {
   generateGoldPriceSchema,
 } from "../../utils/schema";
 
-export const prerender = false;
+export function getStaticPaths() {
+  return cities.map((city) => ({ params: { city: city.slug } }));
+}
 
 const { city: citySlug } = Astro.params;
 const city = getCityBySlug(citySlug!);
 
-if (!city) {
-  return Astro.redirect("/");
-}
-const prices = await getGoldPrices();
+const prices = { xauUsd: 3050, xauInr: 254675, usdInr: 83.5, changeUsd: 12.5, changePct: 0.41, xagUsd: 33.5, silverChangeUsd: 0.25, silverChangePct: 0.75, timestamp: Date.now() };
 const cityData = getCityGoldData(city, prices);
 const nearbyCities = getNearbyCities(city.slug);
 const faqs = getCityFAQs(city.name, city.state);

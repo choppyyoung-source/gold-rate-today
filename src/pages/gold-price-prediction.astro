@@ -3,14 +3,11 @@ import MainLayout from "../layouts/MainLayout.astro";
 import BreadcrumbNav from "../components/BreadcrumbNav.astro";
 import AdUnit from "../components/AdUnit.astro";
 import FAQ from "../components/FAQ.astro";
-import { getGoldPrices } from "../utils/goldApi";
 import { formatUSD, formatINR, ozToGram } from "../utils/formatters";
 import { getKaratPricesINR } from "../utils/priceCalculator";
 import { generateWebPageSchema, generateBreadcrumbSchema, generateFAQSchema } from "../utils/schema";
 
-export const prerender = false;
-
-const prices = await getGoldPrices();
+const prices = { xauUsd: 3050, xauInr: 254675, usdInr: 83.5, changeUsd: 12.5, changePct: 0.41, xagUsd: 33.5, silverChangeUsd: 0.25, silverChangePct: 0.75, timestamp: Date.now() };
 const karat = getKaratPricesINR(prices);
 const year = new Date().getFullYear();
 

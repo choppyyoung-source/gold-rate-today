@@ -3,14 +3,11 @@ import MainLayout from "../layouts/MainLayout.astro";
 import BreadcrumbNav from "../components/BreadcrumbNav.astro";
 import AdUnit from "../components/AdUnit.astro";
 import FAQ from "../components/FAQ.astro";
-import { getGoldPrices } from "../utils/goldApi";
 import { getSilverPricesINR } from "../utils/priceCalculator";
 import { formatINR, formatUSD, formatPercent } from "../utils/formatters";
 import { generateWebPageSchema, generateBreadcrumbSchema, generateFAQSchema } from "../utils/schema";
 
-export const prerender = false;
-
-const prices = await getGoldPrices();
+const prices = { xauUsd: 3050, xauInr: 254675, usdInr: 83.5, changeUsd: 12.5, changePct: 0.41, xagUsd: 33.5, silverChangeUsd: 0.25, silverChangePct: 0.75, timestamp: Date.now() };
 const silver = getSilverPricesINR(prices);
 const isUp = prices.silverChangePct >= 0;
 
