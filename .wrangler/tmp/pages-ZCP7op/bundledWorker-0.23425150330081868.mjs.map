@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "sources": ["../../../dist/client/_worker.js/index.js"],
+  "sourceRoot": "/Users/hyunyoung/projects/gold-rate-today/.wrangler/tmp/pages-ZCP7op/bundledWorker-0.23425150330081868.mjs",
+  "sourcesContent": ["globalThis.process ??= {};\nglobalThis.process.env ??= {};\nimport \"cloudflare:workers\";\nimport { w } from \"./chunks/worker-entry_npiV1CLA.mjs\";\nexport {\n  w as default\n};\n"],
+  "mappings": ";AAEA,OAAO;AACP,SAAS,SAAS;AAHlB,WAAW,YAAY,CAAC;AACxB,WAAW,QAAQ,QAAQ,CAAC;",
+  "names": []
+}
