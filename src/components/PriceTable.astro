@@ -1,0 +1,59 @@
+---
+import type { GoldPrices } from "../utils/priceCalculator";
+import { getKaratPricesINR } from "../utils/priceCalculator";
+import { formatINR } from "../utils/formatters";
+
+interface Props {
+  prices: GoldPrices;
+  cityName?: string;
+  adjustment?: number;
+}
+
+const { prices, cityName, adjustment = 1.0 } = Astro.props;
+const karat = getKaratPricesINR(prices);
+
+// Apply city adjustment
+const adj = (v: number) => Math.round(v * adjustment);
+
+const weights = [1, 2, 5, 8, 10, 20, 50, 100];
+const location = cityName || "India";
+---
+
+<section class="mt-8">
+  <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+    Gold Rate Today in {location} - Weight Wise Price
+  </h2>
+  <div class="table-responsive">
+    <table class="w-full text-sm border-collapse">
+      <thead>
+        <tr class="bg-gold-700 text-white">
+          <th class="px-3 py-3 text-left font-semibold rounded-tl-lg">Weight</th>
+          <th class="px-3 py-3 text-right font-semibold">24K Gold</th>
+          <th class="px-3 py-3 text-right font-semibold">22K Gold</th>
+          <th class="px-3 py-3 text-right font-semibold rounded-tr-lg">18K Gold</th>
+        </tr>
+      </thead>
+      <tbody>
+        {weights.map((w, i) => (
+          <tr class={i % 2 === 0 ? "bg-white" : "bg-gold-50/50"}>
+            <td class="px-3 py-2.5 font-medium text-gray-700 border-b border-gray-100">
+              {w} gram{w > 1 ? "s" : ""}
+            </td>
+            <td class="px-3 py-2.5 text-right font-semibold text-gray-900 border-b border-gray-100">
+              {formatINR(adj(karat.k24) * w)}
+            </td>
+            <td class="px-3 py-2.5 text-right font-semibold text-gray-900 border-b border-gray-100">
+              {formatINR(adj(karat.k22) * w)}
+            </td>
+            <td class="px-3 py-2.5 text-right font-medium text-gray-700 border-b border-gray-100">
+              {formatINR(adj(karat.k18) * w)}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="text-xs text-gray-500 mt-2">
+    * Prices are indicative and exclude making charges (8-35%) and GST (3%). Actual jewelry prices will be higher.
+  </p>
+</section>

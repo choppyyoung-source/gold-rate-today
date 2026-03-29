@@ -1,0 +1,158 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import BreadcrumbNav from "../components/BreadcrumbNav.astro";
+import AdUnit from "../components/AdUnit.astro";
+import FAQ from "../components/FAQ.astro";
+import { getGoldPrices } from "../utils/goldApi";
+import { formatUSD, formatINR, ozToGram } from "../utils/formatters";
+import { getKaratPricesINR } from "../utils/priceCalculator";
+import { generateWebPageSchema, generateBreadcrumbSchema, generateFAQSchema } from "../utils/schema";
+
+export const prerender = false;
+
+const prices = await getGoldPrices();
+const karat = getKaratPricesINR(prices);
+const year = new Date().getFullYear();
+
+const title = `Gold Price Prediction ${year} - Gold Rate Forecast & Analysis`;
+const description = `Gold price prediction and forecast for ${year}. Current gold price: ${formatUSD(prices.xauUsd)}/oz. Expert analysis of factors affecting gold prices, market outlook, and investment guidance.`;
+const faqs = [
+  { question: `Will gold price increase in ${year}?`, answer: `Gold prices are influenced by multiple factors including inflation, interest rates, geopolitical tensions, and currency movements. While many analysts remain bullish on gold due to central bank purchases and economic uncertainty, prices can fluctuate significantly. Always consider gold as a long-term investment and diversify your portfolio. Past performance does not guarantee future returns.` },
+  { question: "What will gold price be in 5 years?", answer: "Long-term gold price predictions vary widely among analysts. Factors like global economic conditions, inflation trends, central bank policies, and geopolitical developments will determine future prices. Most analysts view gold as maintaining its value as a store of wealth over long periods. Consider consulting a financial advisor for personalized investment guidance." },
+  { question: "Should I buy gold now or wait?", answer: "Timing the gold market is difficult even for professional traders. Many financial advisors recommend a systematic investment approach (SIP) for gold, buying small amounts regularly regardless of price. This averages out the cost over time. If you're investing long-term (5+ years), the entry price becomes less significant compared to the overall trend." },
+  { question: "Is gold a safe haven investment?", answer: "Gold has historically served as a safe-haven asset during economic crises, wars, and market crashes. During the 2008 financial crisis and COVID-19 pandemic, gold prices rose significantly. However, gold doesn't generate income (dividends or interest) unlike stocks and bonds, and its price can be volatile in the short term. Consider Sovereign Gold Bonds for additional income." },
+];
+const schemas = [
+  generateWebPageSchema(title, description, "/gold-price-prediction/"),
+  generateBreadcrumbSchema([
+    { name: "Gold Rate Today", url: "/" },
+    { name: "Gold Price Prediction", url: "/gold-price-prediction/" },
+  ]),
+  generateFAQSchema(faqs),
+];
+---
+
+<MainLayout title={title} description={description} canonical="/gold-price-prediction/" schemas={schemas}>
+  <BreadcrumbNav items={[
+    { label: "Gold Rate Today", href: "/" },
+    { label: "Gold Price Prediction" },
+  ]} />
+
+  <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Gold Price Prediction & Forecast {year}</h1>
+  <p class="text-gray-600 mb-6">Analysis of factors affecting gold prices and market outlook.</p>
+
+  <!-- Current Price Context -->
+  <div class="bg-gold-50 border border-gold-200 rounded-xl p-5 mb-8">
+    <h2 class="font-bold text-gray-900 mb-3">Current Gold Price</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+      <div>
+        <p class="text-xs text-gray-500">International (USD/oz)</p>
+        <p class="text-xl font-bold text-gray-900">{formatUSD(prices.xauUsd)}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500">24K (INR/gram)</p>
+        <p class="text-xl font-bold text-gray-900">{formatINR(karat.k24)}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500">22K (INR/gram)</p>
+        <p class="text-xl font-bold text-gray-900">{formatINR(karat.k22)}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500">USD/INR Rate</p>
+        <p class="text-xl font-bold text-gray-900">{prices.usdInr.toFixed(2)}</p>
+      </div>
+    </div>
+  </div>
+
+  <AdUnit slot="in-content" />
+
+  <!-- Analysis Sections -->
+  <section class="space-y-6">
+    <div class="bg-white border border-gray-200 rounded-lg p-5">
+      <h2 class="text-lg font-bold text-gray-900 mb-3">Key Factors Influencing Gold Prices in {year}</h2>
+      <div class="space-y-4 text-sm text-gray-600 leading-relaxed">
+        <div>
+          <h3 class="font-semibold text-gray-900">1. Central Bank Policies</h3>
+          <p>Federal Reserve interest rate decisions significantly impact gold prices. Lower rates reduce the opportunity cost of holding gold, typically boosting prices. Central banks worldwide have been net buyers of gold, adding to reserves for diversification.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-gray-900">2. Geopolitical Tensions</h3>
+          <p>Ongoing global conflicts and trade tensions drive safe-haven demand for gold. Political uncertainty typically pushes investors toward precious metals as a store of value.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-gray-900">3. Inflation Outlook</h3>
+          <p>Gold is widely considered a hedge against inflation. When inflation expectations rise, gold prices tend to increase as the purchasing power of fiat currencies declines.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-gray-900">4. US Dollar Strength</h3>
+          <p>Gold has an inverse relationship with the US Dollar. A weaker dollar makes gold cheaper for international buyers, increasing demand. For Indian investors, the USD/INR exchange rate adds another dimension to gold price movements.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-gray-900">5. Physical Demand (India & China)</h3>
+          <p>India and China together account for over 50% of global gold demand. Wedding seasons, festivals (Dhanteras, Akshaya Tritiya), and rural income levels in India significantly impact domestic gold prices.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-lg p-5">
+      <h2 class="text-lg font-bold text-gray-900 mb-3">Gold Investment Options in India</h2>
+      <div class="table-responsive">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="px-3 py-2 text-left font-semibold">Option</th>
+              <th class="px-3 py-2 text-center font-semibold">Min. Investment</th>
+              <th class="px-3 py-2 text-center font-semibold">Returns</th>
+              <th class="px-3 py-2 text-left font-semibold">Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-gray-100">
+              <td class="px-3 py-2 font-medium">Sovereign Gold Bonds (SGB)</td>
+              <td class="px-3 py-2 text-center">1 gram</td>
+              <td class="px-3 py-2 text-center">Gold returns + 2.5% p.a.</td>
+              <td class="px-3 py-2">Long-term (5-8 years)</td>
+            </tr>
+            <tr class="border-b border-gray-100 bg-gray-50">
+              <td class="px-3 py-2 font-medium">Gold ETFs</td>
+              <td class="px-3 py-2 text-center">~1 unit (~0.01g)</td>
+              <td class="px-3 py-2 text-center">Gold price returns</td>
+              <td class="px-3 py-2">Active traders</td>
+            </tr>
+            <tr class="border-b border-gray-100">
+              <td class="px-3 py-2 font-medium">Digital Gold</td>
+              <td class="px-3 py-2 text-center">As low as ₹1</td>
+              <td class="px-3 py-2 text-center">Gold price returns</td>
+              <td class="px-3 py-2">Small investors</td>
+            </tr>
+            <tr class="border-b border-gray-100 bg-gray-50">
+              <td class="px-3 py-2 font-medium">Physical Gold (Coins/Bars)</td>
+              <td class="px-3 py-2 text-center">0.5 gram</td>
+              <td class="px-3 py-2 text-center">Gold price returns</td>
+              <td class="px-3 py-2">Traditional investors</td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2 font-medium">Gold Mutual Funds</td>
+              <td class="px-3 py-2 text-center">₹500 (SIP)</td>
+              <td class="px-3 py-2 text-center">Gold price returns</td>
+              <td class="px-3 py-2">SIP investors</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <AdUnit slot="in-content" />
+
+  <!-- Disclaimer -->
+  <div class="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4 text-xs text-amber-800">
+    <strong>Disclaimer:</strong> The information provided on this page is for educational and informational purposes only.
+    It does not constitute financial advice or investment recommendations. Gold prices are volatile and past performance
+    does not guarantee future results. Always consult a certified financial advisor before making investment decisions.
+  </div>
+
+  <FAQ faqs={faqs} title="FAQs - Gold Price Prediction" />
+
+  <AdUnit slot="footer" format="horizontal" />
+</MainLayout>

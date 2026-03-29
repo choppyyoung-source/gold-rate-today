@@ -1,0 +1,117 @@
+---
+import type { GoldPrices } from "../utils/priceCalculator";
+import { getKaratPricesINR, getKaratPricesUSD } from "../utils/priceCalculator";
+import { formatINR, formatUSD, formatPercent } from "../utils/formatters";
+import { getTodayString } from "../utils/goldApi";
+
+interface Props {
+  prices: GoldPrices;
+  cityName?: string;
+}
+
+const { prices, cityName } = Astro.props;
+const karatINR = getKaratPricesINR(prices);
+const karatUSD = getKaratPricesUSD(prices);
+const today = getTodayString();
+const isUp = prices.changePct >= 0;
+const location = cityName ? ` in ${cityName}` : " in India";
+---
+
+<section class="bg-gradient-to-br from-gold-50 via-white to-gold-50 border border-gold-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+  <div class="text-center mb-6">
+    <p class="text-sm text-gray-500 mb-1">{today}</p>
+    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+      Gold Rate Today{location}
+    </h1>
+    <p class="text-sm text-gray-500 mt-2">Live 22K &amp; 24K Gold Prices per Gram &amp; per 10 Grams</p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    <!-- 24K Gold -->
+    <div class="bg-white rounded-xl p-5 border border-gold-200 shadow-sm">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold text-gold-700 bg-gold-100 px-2 py-0.5 rounded-full">24K Pure Gold</span>
+        <span class:list={["text-xs font-semibold px-2 py-0.5 rounded-full", isUp ? "text-up bg-green-50" : "text-down bg-red-50"]}>
+          {isUp ? "▲" : "▼"} {formatPercent(prices.changePct)}
+        </span>
+      </div>
+      <div class="mt-3">
+        <p class="text-2xl sm:text-3xl font-bold text-gray-900">{formatINR(karatINR.k24)}</p>
+        <p class="text-xs text-gray-500 mt-1">per gram</p>
+      </div>
+      <div class="mt-3 pt-3 border-t border-gray-100">
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-500">Per 10 grams</span>
+          <span class="font-semibold text-gray-900">{formatINR(karatINR.k24 * 10)}</span>
+        </div>
+        <div class="flex justify-between text-sm mt-1">
+          <span class="text-gray-500">Per gram (USD)</span>
+          <span class="font-medium text-gray-600">{formatUSD(karatUSD.k24)}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 22K Gold -->
+    <div class="bg-white rounded-xl p-5 border border-gold-200 shadow-sm">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold text-gold-700 bg-gold-100 px-2 py-0.5 rounded-full">22K (916) Gold</span>
+        <span class:list={["text-xs font-semibold px-2 py-0.5 rounded-full", isUp ? "text-up bg-green-50" : "text-down bg-red-50"]}>
+          {isUp ? "▲" : "▼"} {formatPercent(prices.changePct)}
+        </span>
+      </div>
+      <div class="mt-3">
+        <p class="text-2xl sm:text-3xl font-bold text-gray-900">{formatINR(karatINR.k22)}</p>
+        <p class="text-xs text-gray-500 mt-1">per gram</p>
+      </div>
+      <div class="mt-3 pt-3 border-t border-gray-100">
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-500">Per 10 grams</span>
+          <span class="font-semibold text-gray-900">{formatINR(karatINR.k22 * 10)}</span>
+        </div>
+        <div class="flex justify-between text-sm mt-1">
+          <span class="text-gray-500">Per gram (USD)</span>
+          <span class="font-medium text-gray-600">{formatUSD(karatUSD.k22)}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 18K Gold -->
+    <div class="bg-white rounded-xl p-5 border border-gold-200 shadow-sm sm:col-span-2 lg:col-span-1">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold text-gold-700 bg-gold-100 px-2 py-0.5 rounded-full">18K (750) Gold</span>
+        <span class:list={["text-xs font-semibold px-2 py-0.5 rounded-full", isUp ? "text-up bg-green-50" : "text-down bg-red-50"]}>
+          {isUp ? "▲" : "▼"} {formatPercent(prices.changePct)}
+        </span>
+      </div>
+      <div class="mt-3">
+        <p class="text-2xl sm:text-3xl font-bold text-gray-900">{formatINR(karatINR.k18)}</p>
+        <p class="text-xs text-gray-500 mt-1">per gram</p>
+      </div>
+      <div class="mt-3 pt-3 border-t border-gray-100">
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-500">Per 10 grams</span>
+          <span class="font-semibold text-gray-900">{formatINR(karatINR.k18 * 10)}</span>
+        </div>
+        <div class="flex justify-between text-sm mt-1">
+          <span class="text-gray-500">Per gram (USD)</span>
+          <span class="font-medium text-gray-600">{formatUSD(karatUSD.k18)}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- International Price Bar -->
+  <div class="mt-4 bg-white/80 rounded-lg px-4 py-3 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-sm border border-gold-100">
+    <div class="flex items-center gap-2">
+      <span class="text-gray-500">XAU/USD:</span>
+      <span class="font-bold text-gray-900">{formatUSD(prices.xauUsd)}/oz</span>
+      <span class:list={["font-medium", isUp ? "text-up" : "text-down"]}>
+        {isUp ? "+" : ""}{formatUSD(prices.changeUsd)}
+      </span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-gray-500">USD/INR:</span>
+      <span class="font-semibold text-gray-900">{prices.usdInr.toFixed(2)}</span>
+    </div>
+  </div>
+</section>

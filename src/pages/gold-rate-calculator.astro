@@ -1,0 +1,68 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import BreadcrumbNav from "../components/BreadcrumbNav.astro";
+import AdUnit from "../components/AdUnit.astro";
+import FAQ from "../components/FAQ.astro";
+import Calculator from "../components/Calculator.tsx";
+import { getGoldPrices } from "../utils/goldApi";
+import { getKaratPricesINR } from "../utils/priceCalculator";
+import { formatINR } from "../utils/formatters";
+import { generateWebPageSchema, generateBreadcrumbSchema, generateFAQSchema } from "../utils/schema";
+
+export const prerender = false;
+
+const prices = await getGoldPrices();
+const karatINR = getKaratPricesINR(prices);
+
+const title = "Gold Rate Calculator - Calculate Gold Jewelry Price with GST & Making Charges";
+const description = `Calculate gold jewelry price with GST and making charges. Current gold rate: 22K at ${formatINR(karatINR.k22)}/gram, 24K at ${formatINR(karatINR.k24)}/gram. Enter weight and purity to get the total estimated price.`;
+const faqs = [
+  { question: "How to calculate gold jewelry price?", answer: "To calculate gold jewelry price: (1) Multiply gold rate per gram by weight in grams to get the gold value, (2) Add making charges (8-35% of gold value), (3) Add 3% GST on gold value, (4) Add 5% GST on making charges. The total of all these gives the approximate jewelry price." },
+  { question: "What are typical making charges for gold jewelry?", answer: "Making charges vary by design complexity: Simple chains and bangles: 8-12%, Regular jewelry: 12-18%, Detailed temple/antique designs: 18-25%, Designer/bridal jewelry: 25-35%. Machine-made pieces have lower charges than hand-crafted ones." },
+  { question: "Is GST applicable on gold jewelry?", answer: "Yes, GST is applicable on gold jewelry in India. 3% GST is charged on the gold value, and 5% GST is charged on the making charges. For example, on a ₹1,00,000 gold value with ₹12,000 making charges, the GST would be ₹3,000 (on gold) + ₹600 (on making) = ₹3,600." },
+  { question: "How to calculate gold rate per gram from 10 gram price?", answer: "Simply divide the 10 gram price by 10. For example, if 10 grams of 22K gold costs ₹72,000, then the per gram rate is ₹72,000 ÷ 10 = ₹7,200 per gram." },
+];
+const schemas = [
+  generateWebPageSchema(title, description, "/gold-rate-calculator/"),
+  generateBreadcrumbSchema([
+    { name: "Gold Rate Today", url: "/" },
+    { name: "Gold Calculator", url: "/gold-rate-calculator/" },
+  ]),
+  generateFAQSchema(faqs),
+];
+---
+
+<MainLayout title={title} description={description} canonical="/gold-rate-calculator/" schemas={schemas}>
+  <BreadcrumbNav items={[
+    { label: "Gold Rate Today", href: "/" },
+    { label: "Gold Rate Calculator" },
+  ]} />
+
+  <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Gold Rate Calculator</h1>
+  <p class="text-gray-600 mb-6">Calculate the total cost of gold jewelry including making charges and GST based on today's live gold rates.</p>
+
+  <Calculator
+    client:load
+    k24PricePerGram={karatINR.k24}
+    k22PricePerGram={karatINR.k22}
+    k18PricePerGram={karatINR.k18}
+  />
+
+  <AdUnit slot="in-content" />
+
+  <!-- How to Use -->
+  <section class="mt-8 bg-white border border-gray-200 rounded-lg p-5">
+    <h2 class="text-lg font-bold text-gray-900 mb-3">How to Use the Gold Calculator</h2>
+    <ol class="list-decimal list-inside space-y-2 text-sm text-gray-600">
+      <li><strong>Enter the weight</strong> of gold in grams (e.g., 10 grams for a standard gold chain)</li>
+      <li><strong>Select the purity</strong> - 22K (916) for jewelry or 24K (999) for coins/bars</li>
+      <li><strong>Set making charges</strong> percentage based on the jeweler (typically 8-35%)</li>
+      <li><strong>Toggle GST</strong> to include or exclude 3% GST on gold and 5% GST on making charges</li>
+      <li>The calculator instantly shows the <strong>estimated total price</strong> with a complete breakdown</li>
+    </ol>
+  </section>
+
+  <FAQ faqs={faqs} title="FAQs - Gold Calculator" />
+
+  <AdUnit slot="footer" format="horizontal" />
+</MainLayout>

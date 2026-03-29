@@ -1,0 +1,75 @@
+---
+const navItems = [
+  { label: "Gold Rate", href: "/" },
+  { label: "Calculator", href: "/gold-rate-calculator/" },
+  { label: "Price History", href: "/gold-price-history/" },
+  { label: "Silver Rate", href: "/silver-rate-today/" },
+  { label: "22K Gold", href: "/22-carat-gold-rate-today/" },
+  { label: "24K Gold", href: "/24-carat-gold-rate-today/" },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="bg-gradient-to-r from-gold-800 to-gold-700 text-white shadow-lg sticky top-0 z-50">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex items-center justify-between h-14">
+      <a href="/" class="flex items-center gap-2 shrink-0">
+        <svg viewBox="0 0 24 24" class="w-7 h-7 text-gold-300" fill="currentColor">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <text x="12" y="16" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">Au</text>
+        </svg>
+        <span class="font-bold text-lg hidden sm:inline">Gold Rates Live</span>
+        <span class="font-bold text-lg sm:hidden">GRL</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-1">
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+              currentPath === item.href
+                ? "bg-gold-600 text-white"
+                : "text-gold-100 hover:bg-gold-600/50 hover:text-white",
+            ]}
+          >
+            {item.label}
+          </a>
+        ))}
+      </div>
+
+      <button
+        id="mobile-menu-btn"
+        class="md:hidden p-2 rounded-md text-gold-200 hover:text-white hover:bg-gold-600/50"
+        aria-label="Toggle menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="md:hidden hidden pb-3">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            "block px-3 py-2 rounded-md text-sm font-medium",
+            currentPath === item.href
+              ? "bg-gold-600 text-white"
+              : "text-gold-100 hover:bg-gold-600/50 hover:text-white",
+          ]}
+        >
+          {item.label}
+        </a>
+      ))}
+    </div>
+  </nav>
+</header>
+
+<script>
+  const btn = document.getElementById("mobile-menu-btn");
+  const menu = document.getElementById("mobile-menu");
+  btn?.addEventListener("click", () => menu?.classList.toggle("hidden"));
+</script>

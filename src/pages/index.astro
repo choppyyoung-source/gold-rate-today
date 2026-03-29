@@ -1,17 +1,114 @@
 ---
+import MainLayout from "../layouts/MainLayout.astro";
+import GoldPriceHero from "../components/GoldPriceHero.astro";
+import PriceTable from "../components/PriceTable.astro";
+import CityRatesTable from "../components/CityRatesTable.astro";
+import FAQ from "../components/FAQ.astro";
+import AdUnit from "../components/AdUnit.astro";
+import BreadcrumbNav from "../components/BreadcrumbNav.astro";
+import PriceChart from "../components/PriceChart.tsx";
+import { getGoldPrices, getTodayString } from "../utils/goldApi";
+import { generateHistoricalData } from "../utils/priceCalculator";
+import { generateWebPageSchema, generateFAQSchema, generateGoldPriceSchema, generateBreadcrumbSchema } from "../utils/schema";
+import { getKaratPricesINR } from "../utils/priceCalculator";
+import { mainPageFAQs } from "../data/faqs";
+import { formatINR } from "../utils/formatters";
 
+export const prerender = false;
+
+const prices = await getGoldPrices();
+const karatINR = getKaratPricesINR(prices);
+const today = getTodayString();
+const historyData = generateHistoricalData(prices.xauUsd, 30);
+
+const title = `Gold Rate Today (${formatINR(karatINR.k22)}/g 22K) - Live Gold Price in India`;
+const description = `Today's gold rate: 22K gold at ${formatINR(karatINR.k22)}/gram and 24K gold at ${formatINR(karatINR.k24)}/gram. Live gold prices in India updated every 5 minutes. Check city-wise rates, price history, and gold calculator.`;
+
+const schemas = [
+  generateWebPageSchema(title, description, "/"),
+  generateFAQSchema(mainPageFAQs),
+  generateBreadcrumbSchema([{ name: "Gold Rate Today", url: "/" }]),
+  generateGoldPriceSchema(prices, "INR", karatINR.k24),
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<MainLayout title={title} description={description} canonical="/" schemas={schemas}>
+  <BreadcrumbNav items={[{ label: "Gold Rate Today" }]} />
+
+  <GoldPriceHero prices={prices} />
+
+  <AdUnit slot="header" format="horizontal" />
+
+  <PriceTable prices={prices} />
+
+  <PriceChart client:visible data={historyData} currency="USD" title="Gold Price Chart (30 Days)" />
+
+  <AdUnit slot="in-content" />
+
+  <CityRatesTable prices={prices} />
+
+  <!-- Educational Content for SEO/AEO/GEO -->
+  <section class="mt-10">
+    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Understanding Gold Rates in India</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white border border-gray-200 rounded-lg p-5">
+        <h3 class="font-semibold text-gray-900 mb-2">How is the Gold Rate Determined?</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          The gold rate in India is primarily determined by the India Bullion and Jewellers Association (IBJA).
+          It is calculated based on the international spot price (LBMA London Fix), converted using the USD/INR
+          exchange rate, and adjusted for customs duty (15%) and GST (3%). The IBJA publishes opening and closing
+          rates each business day that serve as the benchmark for jewelers across the country.
+        </p>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-5">
+        <h3 class="font-semibold text-gray-900 mb-2">What Factors Affect Gold Prices?</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          Gold prices are influenced by multiple factors: the US Dollar index (inverse correlation),
+          global interest rates set by the Federal Reserve, geopolitical tensions, inflation expectations,
+          central bank gold purchases, demand from India and China (the two largest consumers), mining
+          supply, and ETF fund flows. In India, the USD/INR exchange rate adds an additional layer of
+          price movement.
+        </p>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-5">
+        <h3 class="font-semibold text-gray-900 mb-2">22K vs 24K Gold: Which Should You Buy?</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          24 karat gold (99.9% pure) is ideal for investment as gold bars and coins, offering maximum
+          gold content per gram. 22 karat gold (91.67% pure, also known as 916 gold) is the standard
+          for jewelry in India, as the added alloy metals provide the hardness needed for wearable
+          ornaments. For investment purposes, consider Sovereign Gold Bonds (SGBs) which offer
+          2.5% annual interest in addition to gold price appreciation.
+        </p>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-5">
+        <h3 class="font-semibold text-gray-900 mb-2">Gold as an Investment in India</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          Indians can invest in gold through multiple channels: physical gold (jewelry, coins, bars),
+          Gold ETFs on stock exchanges, Sovereign Gold Bonds (SGBs) issued by RBI, digital gold
+          platforms, and gold mutual funds. SGBs are considered the most tax-efficient option, offering
+          capital gains tax exemption on maturity along with a 2.5% annual interest payment.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <AdUnit slot="in-content" />
+
+  <FAQ faqs={mainPageFAQs} />
+
+  <!-- Related Links for internal linking -->
+  <section class="mt-8 bg-white border border-gray-200 rounded-lg p-5">
+    <h2 class="font-bold text-gray-900 mb-3">Related Gold Rate Pages</h2>
+    <div class="flex flex-wrap gap-2">
+      <a href="/22-carat-gold-rate-today/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">22 Carat Gold Rate</a>
+      <a href="/24-carat-gold-rate-today/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">24 Carat Gold Rate</a>
+      <a href="/gold-rate-today-per-tola/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Rate per Tola</a>
+      <a href="/gold-rate-calculator/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Calculator</a>
+      <a href="/gold-price-history/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Price History</a>
+      <a href="/silver-rate-today/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Silver Rate Today</a>
+      <a href="/gold-price-prediction/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Price Prediction</a>
+    </div>
+  </section>
+
+  <AdUnit slot="footer" format="horizontal" />
+</MainLayout>

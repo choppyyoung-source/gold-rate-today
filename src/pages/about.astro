@@ -1,0 +1,73 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import BreadcrumbNav from "../components/BreadcrumbNav.astro";
+import { generateWebPageSchema, generateBreadcrumbSchema } from "../utils/schema";
+
+export const prerender = true;
+
+const title = "About Gold Rates Live - Your Trusted Gold Price Tracker";
+const description = "Gold Rates Live provides real-time gold and silver prices across 80+ Indian cities. Updated every 5 minutes with data from international markets and IBJA.";
+const schemas = [
+  generateWebPageSchema(title, description, "/about/"),
+  generateBreadcrumbSchema([
+    { name: "Gold Rate Today", url: "/" },
+    { name: "About", url: "/about/" },
+  ]),
+];
+---
+
+<MainLayout title={title} description={description} canonical="/about/" schemas={schemas}>
+  <BreadcrumbNav items={[
+    { label: "Gold Rate Today", href: "/" },
+    { label: "About Us" },
+  ]} />
+
+  <div class="max-w-3xl">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">About Gold Rates Live</h1>
+
+    <div class="space-y-6 text-gray-600 leading-relaxed">
+      <p>
+        <strong class="text-gray-900">Gold Rates Live</strong> is your comprehensive source for real-time
+        gold and silver prices in India and globally. We track precious metal prices across 80+ Indian
+        cities, providing accurate and timely information for consumers, jewelers, and investors.
+      </p>
+
+      <section>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Our Data Sources</h2>
+        <p>
+          Our gold prices are sourced from international spot markets (London Bullion Market Association
+          and COMEX), cross-referenced with IBJA (India Bullion and Jewellers Association) rates, and
+          adjusted for local market conditions. Prices are updated every 5 minutes during market hours
+          to ensure accuracy.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">What We Offer</h2>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Live 22K, 24K, and 18K gold rates in INR and USD</li>
+          <li>City-wise gold prices for 80+ Indian cities</li>
+          <li>Silver rates updated in real-time</li>
+          <li>Gold rate calculator with GST and making charges</li>
+          <li>Historical price charts and data</li>
+          <li>Gold price analysis and market insights</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Disclaimer</h2>
+        <p>
+          All gold and silver prices displayed on this website are indicative and for informational
+          purposes only. Actual prices at jewelry stores may vary due to making charges, design
+          premiums, taxes, and local market conditions. We do not provide investment advice. Please
+          consult a certified financial advisor before making investment decisions.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Contact</h2>
+        <p>For inquiries, corrections, or feedback, please reach out to us at info@goldrateslive.com.</p>
+      </section>
+    </div>
+  </div>
+</MainLayout>

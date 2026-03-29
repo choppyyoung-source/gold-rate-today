@@ -1,0 +1,76 @@
+---
+import { topCities } from "../data/cities";
+
+const cityLinks = topCities.slice(0, 12);
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="bg-gray-900 text-gray-300 mt-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- About -->
+      <div>
+        <h3 class="text-white font-bold text-lg mb-3">Gold Rates Live</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">
+          Live gold and silver prices updated every few minutes. Track 22K, 24K, and 18K gold rates across 80+ Indian cities.
+          Data sourced from international markets and IBJA.
+        </p>
+      </div>
+
+      <!-- Quick Links -->
+      <div>
+        <h3 class="text-white font-semibold mb-3">Quick Links</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/" class="hover:text-gold-400 transition-colors">Today's Gold Rate</a></li>
+          <li><a href="/gold-rate-calculator/" class="hover:text-gold-400 transition-colors">Gold Calculator</a></li>
+          <li><a href="/gold-price-history/" class="hover:text-gold-400 transition-colors">Price History</a></li>
+          <li><a href="/silver-rate-today/" class="hover:text-gold-400 transition-colors">Silver Rate Today</a></li>
+          <li><a href="/22-carat-gold-rate-today/" class="hover:text-gold-400 transition-colors">22K Gold Rate</a></li>
+          <li><a href="/24-carat-gold-rate-today/" class="hover:text-gold-400 transition-colors">24K Gold Rate</a></li>
+          <li><a href="/gold-rate-today-per-tola/" class="hover:text-gold-400 transition-colors">Gold Rate per Tola</a></li>
+          <li><a href="/gold-price-prediction/" class="hover:text-gold-400 transition-colors">Gold Price Forecast</a></li>
+        </ul>
+      </div>
+
+      <!-- Top Cities -->
+      <div>
+        <h3 class="text-white font-semibold mb-3">Gold Rate in Cities</h3>
+        <ul class="space-y-2 text-sm">
+          {cityLinks.map((city) => (
+            <li>
+              <a href={`/gold-rate-today-in/${city.slug}/`} class="hover:text-gold-400 transition-colors">
+                Gold Rate in {city.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Info -->
+      <div>
+        <h3 class="text-white font-semibold mb-3">Information</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/about/" class="hover:text-gold-400 transition-colors">About Us</a></li>
+        </ul>
+        <div class="mt-6">
+          <h4 class="text-white font-semibold mb-2 text-sm">Data Sources</h4>
+          <p class="text-xs text-gray-500">
+            Gold prices based on international spot market (LBMA/COMEX), IBJA rates, and MCX data.
+            Prices include 3% GST. Making charges are additional.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-800 mt-8 pt-8">
+      <div class="text-center text-xs text-gray-500 space-y-2">
+        <p>
+          <strong>Disclaimer:</strong> Gold prices shown are indicative and for informational purposes only.
+          Actual prices may vary at jewelry stores due to making charges, design premiums, and local factors.
+          We do not provide investment advice. Consult a financial advisor before making investment decisions.
+        </p>
+        <p>&copy; {currentYear} Gold Rates Live. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
