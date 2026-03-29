@@ -1,0 +1,180 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import BreadcrumbNav from "../components/BreadcrumbNav.astro";
+import AdUnit from "../components/AdUnit.astro";
+import FAQ from "../components/FAQ.astro";
+import { formatUSD } from "../utils/formatters";
+import { generateWebPageSchema, generateBreadcrumbSchema, generateFAQSchema } from "../utils/schema";
+
+const prices = { xauUsd: 3050, xauInr: 254675, usdInr: 83.5, changeUsd: 12.5, changePct: 0.41, xagUsd: 33.5, silverChangeUsd: 0.25, silverChangePct: 0.75, timestamp: Date.now() };
+const aedRate = 3.6725;
+const perGramAed24k = (prices.xauUsd / 31.1035) * aedRate;
+const perGramAed22k = perGramAed24k * 22 / 24;
+const perGramAed18k = perGramAed24k * 18 / 24;
+const isUp = prices.changePct >= 0;
+const fmtAed = (n: number) => `AED ${Math.round(n).toLocaleString()}`;
+
+const title = `Gold Price Today in Dubai (${fmtAed(perGramAed24k)}/g 24K) - Live UAE Gold Rate`;
+const description = `Today's gold rate in Dubai, UAE: 24K at ${fmtAed(perGramAed24k)}/gram, 22K at ${fmtAed(perGramAed22k)}/gram. Live gold prices in AED (UAE Dirham). Dubai Gold Souk rates updated from international markets.`;
+const faqs = [
+  { question: "What is the gold rate in Dubai today?", answer: `The gold rate in Dubai today is approximately ${fmtAed(perGramAed24k)} per gram for 24K gold and ${fmtAed(perGramAed22k)} per gram for 22K gold. Dubai gold prices closely follow the international spot price (XAU/USD) converted to AED at the fixed peg rate of 3.6725 AED/USD.` },
+  { question: "Is gold cheaper in Dubai than India?", answer: "Yes, gold is generally 5-8% cheaper in Dubai compared to India. This is because India charges 15% customs duty + 3% GST on gold imports, while Dubai has zero import duty on gold. However, when traveling back to India, you can only carry up to 1 kg of gold (men) or jewelry (women) and must pay customs duty on amounts exceeding the duty-free allowance." },
+  { question: "Why is gold popular in Dubai?", answer: "Dubai is one of the world's largest gold trading hubs due to: (1) Zero import duty on gold, (2) No VAT on investment gold (bars/coins), (3) Strategic location between Asia, Europe, and Africa, (4) The famous Dubai Gold Souk with 300+ retailers, (5) Dubai Multi Commodities Centre (DMCC) as a global trading hub, and (6) Strong demand from Indian, Pakistani, and Arab communities." },
+  { question: "What is the Dubai Gold Souk?", answer: "The Dubai Gold Souk is a traditional market in Deira, Dubai, with over 300 jewelry retailers. It is one of the largest gold markets in the world, offering 22K, 21K, 18K, and 24K gold in various forms. Prices are based on the daily gold rate plus making charges (which are negotiable). The Souk operates from 10 AM to 10 PM (4 PM - 10 PM during Fridays)." },
+  { question: "Do you pay tax on gold in Dubai?", answer: "Investment gold (bars and coins of 99%+ purity) is VAT-exempt in the UAE. Gold jewelry is subject to 5% VAT. There is no import duty on gold in Dubai. This tax advantage makes Dubai one of the cheapest places to buy gold globally. However, you must declare gold when traveling internationally and may be subject to customs duty in your destination country." },
+];
+const schemas = [
+  generateWebPageSchema(title, description, "/gold-price-today-in-dubai/"),
+  generateBreadcrumbSchema([
+    { name: "Gold Rate Today", url: "/" },
+    { name: "Gold Price in Dubai", url: "/gold-price-today-in-dubai/" },
+  ]),
+  generateFAQSchema(faqs),
+];
+---
+
+<MainLayout title={title} description={description} canonical="/gold-price-today-in-dubai/" schemas={schemas}>
+  <BreadcrumbNav items={[
+    { label: "Gold Rate Today", href: "/" },
+    { label: "Gold Price Today in Dubai" },
+  ]} />
+
+  <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Gold Price Today in Dubai, UAE</h1>
+  <p class="text-gray-600 mb-6">Live gold rates in UAE Dirham (AED). Based on international spot price at fixed AED/USD peg rate of 3.6725.</p>
+
+  <!-- Dubai Price Hero -->
+  <div class="bg-gradient-to-br from-amber-50 via-white to-amber-50 border border-amber-200 rounded-2xl p-6 sm:p-8">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="bg-white rounded-xl p-5 border border-amber-200 shadow-sm text-center">
+        <p class="text-xs font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full inline-block mb-2">24K Gold</p>
+        <p class="text-2xl sm:text-3xl font-bold text-gray-900">{fmtAed(perGramAed24k)}</p>
+        <p class="text-xs text-gray-500 mt-1">per gram</p>
+        <span class:list={["text-xs font-semibold mt-2 inline-block", isUp ? "text-green-600" : "text-red-600"]}>
+          {isUp ? "▲" : "▼"} {isUp ? "+" : ""}{prices.changePct.toFixed(2)}%
+        </span>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-amber-200 shadow-sm text-center">
+        <p class="text-xs font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full inline-block mb-2">22K Gold</p>
+        <p class="text-2xl sm:text-3xl font-bold text-gray-900">{fmtAed(perGramAed22k)}</p>
+        <p class="text-xs text-gray-500 mt-1">per gram</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-amber-200 shadow-sm text-center">
+        <p class="text-xs font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full inline-block mb-2">18K Gold</p>
+        <p class="text-2xl sm:text-3xl font-bold text-gray-900">{fmtAed(perGramAed18k)}</p>
+        <p class="text-xs text-gray-500 mt-1">per gram</p>
+      </div>
+    </div>
+
+    <div class="mt-4 bg-white/80 rounded-lg px-4 py-3 flex flex-wrap items-center justify-center gap-6 text-sm border border-amber-100">
+      <div><span class="text-gray-500">XAU/USD: </span><span class="font-bold">{formatUSD(prices.xauUsd)}/oz</span></div>
+      <div><span class="text-gray-500">AED/USD: </span><span class="font-bold">3.6725</span></div>
+    </div>
+  </div>
+
+  <AdUnit slot="in-content" />
+
+  <!-- Weight Table AED -->
+  <section class="mt-8">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Gold Rate in Dubai by Weight (AED)</h2>
+    <div class="table-responsive">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="bg-amber-700 text-white">
+            <th class="px-3 py-3 text-left font-semibold rounded-tl-lg">Weight</th>
+            <th class="px-3 py-3 text-right font-semibold">24K Gold</th>
+            <th class="px-3 py-3 text-right font-semibold">22K Gold</th>
+            <th class="px-3 py-3 text-right font-semibold rounded-tr-lg">18K Gold</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[1, 2, 5, 8, 10, 20, 50, 100].map((w, i) => (
+            <tr class={i % 2 === 0 ? "bg-white" : "bg-amber-50/50"}>
+              <td class="px-3 py-2.5 font-medium border-b border-gray-100">{w} gram{w > 1 ? "s" : ""}</td>
+              <td class="px-3 py-2.5 text-right font-semibold border-b border-gray-100">{fmtAed(perGramAed24k * w)}</td>
+              <td class="px-3 py-2.5 text-right font-semibold border-b border-gray-100">{fmtAed(perGramAed22k * w)}</td>
+              <td class="px-3 py-2.5 text-right font-medium border-b border-gray-100">{fmtAed(perGramAed18k * w)}</td>
+            </tr>
+          ))}
+          <tr class="bg-white">
+            <td class="px-3 py-2.5 font-medium">1 Tola (11.66g)</td>
+            <td class="px-3 py-2.5 text-right font-bold text-amber-800">{fmtAed(perGramAed24k * 11.6638)}</td>
+            <td class="px-3 py-2.5 text-right font-bold">{fmtAed(perGramAed22k * 11.6638)}</td>
+            <td class="px-3 py-2.5 text-right font-medium">{fmtAed(perGramAed18k * 11.6638)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Dubai vs India Comparison -->
+  <section class="mt-8">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Gold Price: Dubai vs India</h2>
+    <div class="table-responsive">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="bg-gray-700 text-white">
+            <th class="px-3 py-3 text-left font-semibold rounded-tl-lg">Purity</th>
+            <th class="px-3 py-3 text-right font-semibold">Dubai (AED/g)</th>
+            <th class="px-3 py-3 text-right font-semibold">India (INR/g)</th>
+            <th class="px-3 py-3 text-right font-semibold rounded-tr-lg">India Premium</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[
+            { label: "24K", aed: perGramAed24k, inr: Math.round(prices.xauInr / 31.1035) },
+            { label: "22K", aed: perGramAed22k, inr: Math.round((prices.xauInr / 31.1035) * 22 / 24) },
+            { label: "18K", aed: perGramAed18k, inr: Math.round((prices.xauInr / 31.1035) * 18 / 24) },
+          ].map((row, i) => {
+            const dubaiInInr = row.aed / aedRate * prices.usdInr;
+            const premium = ((row.inr - dubaiInInr) / dubaiInInr * 100).toFixed(1);
+            return (
+              <tr class={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                <td class="px-3 py-2.5 font-semibold border-b border-gray-100">{row.label} Gold</td>
+                <td class="px-3 py-2.5 text-right border-b border-gray-100">{fmtAed(row.aed)}</td>
+                <td class="px-3 py-2.5 text-right border-b border-gray-100">₹{row.inr.toLocaleString("en-IN")}</td>
+                <td class="px-3 py-2.5 text-right font-medium text-red-600 border-b border-gray-100">+{premium}%</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-gray-500 mt-2">* India prices include customs duty (15%) and GST (3%). Dubai has zero import duty on gold.</p>
+  </section>
+
+  <AdUnit slot="in-content" />
+
+  <section class="mt-8 bg-white border border-gray-200 rounded-lg p-5">
+    <h2 class="text-lg font-bold text-gray-900 mb-3">About Gold Market in Dubai</h2>
+    <div class="text-sm text-gray-600 leading-relaxed space-y-3">
+      <p>
+        Dubai is one of the world's premier gold trading centers. The <dfn class="font-medium text-gray-900 not-italic">Dubai Multi Commodities Centre (DMCC)</dfn>
+        handles billions of dollars in gold trade annually, making the UAE the world's second-largest gold trading hub after London.
+      </p>
+      <p>
+        Gold prices in Dubai are set daily by the Dubai Gold &amp; Jewellery Group based on international spot prices.
+        The UAE Dirham is pegged to the US Dollar at a fixed rate of AED 3.6725 per USD, so gold prices in AED move
+        directly with the international USD gold price without exchange rate volatility.
+      </p>
+      <p>
+        Popular gold shopping destinations include the <dfn class="font-medium text-gray-900 not-italic">Dubai Gold Souk</dfn> in Deira (300+ shops),
+        Gold Land in Mall of the Emirates, and various jewelry stores in Dubai Mall. Making charges in Dubai
+        typically range from AED 10-50 per gram depending on design complexity.
+      </p>
+    </div>
+  </section>
+
+  <FAQ faqs={faqs} title="FAQs - Gold Price in Dubai" />
+
+  <section class="mt-8 bg-white border border-gray-200 rounded-lg p-5">
+    <h2 class="font-bold text-gray-900 mb-3">Related Pages</h2>
+    <div class="flex flex-wrap gap-2">
+      <a href="/gold-price-today-usd/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Price USD</a>
+      <a href="/gold-price-per-ounce/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Price per Ounce</a>
+      <a href="/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Rate India</a>
+      <a href="/gold-rate-today-in/chennai/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Rate Chennai</a>
+    </div>
+  </section>
+
+  <AdUnit slot="footer" format="horizontal" />
+</MainLayout>

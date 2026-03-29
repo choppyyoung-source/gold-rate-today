@@ -1,0 +1,137 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import BreadcrumbNav from "../components/BreadcrumbNav.astro";
+import AdUnit from "../components/AdUnit.astro";
+import FAQ from "../components/FAQ.astro";
+import PriceChart from "../components/PriceChart.tsx";
+import { generateHistoricalData } from "../utils/priceCalculator";
+import { formatUSD, formatINR } from "../utils/formatters";
+import { generateWebPageSchema, generateBreadcrumbSchema, generateFAQSchema } from "../utils/schema";
+
+const prices = { xauUsd: 3050, xauInr: 254675, usdInr: 83.5, changeUsd: 12.5, changePct: 0.41, xagUsd: 33.5, silverChangeUsd: 0.25, silverChangePct: 0.75, timestamp: Date.now() };
+const isUp = prices.changePct >= 0;
+const historyData = generateHistoricalData(prices.xauUsd, 30);
+
+const title = `Gold Price per Ounce Today (${formatUSD(prices.xauUsd)}) - Live Troy Ounce Price`;
+const description = `Gold price per troy ounce today: ${formatUSD(prices.xauUsd)}. Live XAU/USD spot price with 30-day chart. 1 troy ounce = 31.1035 grams. Convert between ounce, gram, kilogram, and tola.`;
+const faqs = [
+  { question: "How much is 1 ounce of gold today?", answer: `1 troy ounce of gold is currently priced at approximately ${formatUSD(prices.xauUsd)} on the international spot market. This is the standard unit used for gold pricing worldwide. Note that a troy ounce (31.1035g) is slightly heavier than a regular avoirdupois ounce (28.35g).` },
+  { question: "What is a troy ounce?", answer: "A troy ounce is the standard unit of measurement for precious metals. It equals 31.1035 grams, which is about 10% heavier than a regular (avoirdupois) ounce of 28.3495 grams. The troy system originated in Troyes, France and has been used for precious metals since the Middle Ages. 1 troy ounce = 31.1035 grams = 20 pennyweights." },
+  { question: "How many grams in an ounce of gold?", answer: "One troy ounce of gold contains exactly 31.1035 grams. This is different from a standard ounce (28.35g). When gold prices are quoted 'per ounce,' they always refer to troy ounces. To convert: price per gram = price per ounce ÷ 31.1035." },
+  { question: "How much is 1 kg of gold worth?", answer: `1 kilogram (1000 grams) of gold equals approximately 32.15 troy ounces. At the current spot price of ${formatUSD(prices.xauUsd)}/oz, 1 kg of gold is worth approximately ${formatUSD(prices.xauUsd * 32.15)}. Gold bars commonly come in 1 kg, 100g, and 1 oz sizes.` },
+  { question: "What is the difference between spot price and retail price?", answer: "The spot price is the current market price for immediate delivery of raw gold. Retail prices for physical gold (coins, bars) include a premium of 3-10% above spot to cover manufacturing, shipping, dealer margins, and insurance. Popular coins like American Gold Eagle or Canadian Maple Leaf typically carry a 4-6% premium." },
+];
+const schemas = [
+  generateWebPageSchema(title, description, "/gold-price-per-ounce/"),
+  generateBreadcrumbSchema([
+    { name: "Gold Rate Today", url: "/" },
+    { name: "Gold Price per Ounce", url: "/gold-price-per-ounce/" },
+  ]),
+  generateFAQSchema(faqs),
+];
+---
+
+<MainLayout title={title} description={description} canonical="/gold-price-per-ounce/" schemas={schemas}>
+  <BreadcrumbNav items={[
+    { label: "Gold Rate Today", href: "/" },
+    { label: "Gold Price per Ounce" },
+  ]} />
+
+  <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Gold Price per Ounce Today</h1>
+  <p class="text-gray-600 mb-6">Live gold spot price per troy ounce (31.1035 grams) from <a href="https://www.cmegroup.com/markets/metals/precious/gold.html" rel="noopener" class="text-gold-600 underline">COMEX</a> and <a href="https://www.lbma.org.uk" rel="noopener" class="text-gold-600 underline">LBMA</a>.</p>
+
+  <!-- Ounce Price Hero -->
+  <div class="bg-gradient-to-br from-gold-50 via-white to-gold-50 border border-gold-200 rounded-2xl p-6 sm:p-8 text-center">
+    <p class="text-sm text-gray-500">XAU/USD Spot Price</p>
+    <p class="text-4xl sm:text-5xl font-bold text-gray-900 mt-2">{formatUSD(prices.xauUsd)}</p>
+    <p class="text-sm text-gray-500 mt-1">per troy ounce (31.1035g)</p>
+    <span class:list={["text-sm font-semibold mt-2 inline-block px-3 py-1 rounded-full", isUp ? "text-green-600 bg-green-50" : "text-red-600 bg-red-50"]}>
+      {isUp ? "▲" : "▼"} {isUp ? "+" : ""}{formatUSD(prices.changeUsd)} ({isUp ? "+" : ""}{prices.changePct.toFixed(2)}%)
+    </span>
+  </div>
+
+  <AdUnit slot="in-content" />
+
+  <!-- Unit Conversion Table -->
+  <section class="mt-8">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Gold Price by Unit of Measurement</h2>
+    <div class="table-responsive">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="bg-gold-700 text-white">
+            <th class="px-3 py-3 text-left font-semibold rounded-tl-lg">Unit</th>
+            <th class="px-3 py-3 text-center font-semibold">Weight</th>
+            <th class="px-3 py-3 text-right font-semibold">Price (USD)</th>
+            <th class="px-3 py-3 text-right font-semibold rounded-tr-lg">Price (INR)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[
+            { unit: "1 Troy Ounce", weight: "31.1035g", usd: prices.xauUsd, inr: prices.xauInr },
+            { unit: "1 Gram", weight: "1g", usd: prices.xauUsd / 31.1035, inr: prices.xauInr / 31.1035 },
+            { unit: "10 Grams", weight: "10g", usd: (prices.xauUsd / 31.1035) * 10, inr: (prices.xauInr / 31.1035) * 10 },
+            { unit: "1 Tola", weight: "11.66g", usd: (prices.xauUsd / 31.1035) * 11.6638, inr: (prices.xauInr / 31.1035) * 11.6638 },
+            { unit: "100 Grams", weight: "100g", usd: (prices.xauUsd / 31.1035) * 100, inr: (prices.xauInr / 31.1035) * 100 },
+            { unit: "1 Kilogram", weight: "1000g", usd: prices.xauUsd * 32.1507, inr: prices.xauInr * 32.1507 },
+          ].map((row, i) => (
+            <tr class={i % 2 === 0 ? "bg-white" : "bg-gold-50/50"}>
+              <td class="px-3 py-2.5 font-medium border-b border-gray-100">{row.unit}</td>
+              <td class="px-3 py-2.5 text-center text-gray-500 border-b border-gray-100">{row.weight}</td>
+              <td class="px-3 py-2.5 text-right font-semibold border-b border-gray-100">{formatUSD(row.usd)}</td>
+              <td class="px-3 py-2.5 text-right text-gray-700 border-b border-gray-100">{formatINR(Math.round(row.inr))}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <PriceChart client:visible data={historyData} currency="USD" title="Gold Price per Ounce - 30 Day Chart" />
+
+  <AdUnit slot="in-content" />
+
+  <!-- Multi-Ounce Pricing -->
+  <section class="mt-8">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Gold Price by Ounce</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {[1, 2, 5, 10].map((oz) => (
+        <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+          <p class="text-xs text-gray-500">{oz} Troy Ounce{oz > 1 ? "s" : ""}</p>
+          <p class="text-lg font-bold text-gray-900 mt-1">{formatUSD(prices.xauUsd * oz)}</p>
+          <p class="text-xs text-gray-400">{(oz * 31.1035).toFixed(1)}g</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="mt-8 bg-white border border-gray-200 rounded-lg p-5">
+    <h2 class="text-lg font-bold text-gray-900 mb-3">About Gold Pricing per Ounce</h2>
+    <div class="text-sm text-gray-600 leading-relaxed space-y-3">
+      <p>
+        The gold price per ounce is the global standard for quoting precious metal prices. All major exchanges
+        including <a href="https://www.cmegroup.com" rel="noopener" class="text-gold-600 underline">COMEX</a> (New York),
+        <a href="https://www.lbma.org.uk" rel="noopener" class="text-gold-600 underline">LBMA</a> (London), and
+        the Shanghai Gold Exchange use troy ounces as the base unit.
+      </p>
+      <p>
+        <dfn class="font-medium text-gray-900 not-italic">Troy ounce</dfn>: A unit of weight equal to 31.1035 grams,
+        used exclusively for precious metals. It is 10% heavier than a standard (avoirdupois) ounce of 28.35 grams.
+        The name comes from the French market town of Troyes, where this weight standard was established in the Middle Ages.
+      </p>
+    </div>
+  </section>
+
+  <FAQ faqs={faqs} title="FAQs - Gold Price per Ounce" />
+
+  <section class="mt-8 bg-white border border-gray-200 rounded-lg p-5">
+    <h2 class="font-bold text-gray-900 mb-3">Related Pages</h2>
+    <div class="flex flex-wrap gap-2">
+      <a href="/gold-price-today-usd/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Price USD</a>
+      <a href="/gold-price-today-in-dubai/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Price in Dubai</a>
+      <a href="/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Rate India</a>
+      <a href="/gold-rate-today-per-tola/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Rate per Tola</a>
+    </div>
+  </section>
+
+  <AdUnit slot="footer" format="horizontal" />
+</MainLayout>

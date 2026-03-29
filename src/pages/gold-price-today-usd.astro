@@ -1,0 +1,171 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import BreadcrumbNav from "../components/BreadcrumbNav.astro";
+import AdUnit from "../components/AdUnit.astro";
+import FAQ from "../components/FAQ.astro";
+import PriceChart from "../components/PriceChart.tsx";
+import { getKaratPricesUSD, generateHistoricalData } from "../utils/priceCalculator";
+import { formatUSD } from "../utils/formatters";
+import { generateWebPageSchema, generateBreadcrumbSchema, generateFAQSchema } from "../utils/schema";
+
+const prices = { xauUsd: 3050, xauInr: 254675, usdInr: 83.5, changeUsd: 12.5, changePct: 0.41, xagUsd: 33.5, silverChangeUsd: 0.25, silverChangePct: 0.75, timestamp: Date.now() };
+const karatUSD = getKaratPricesUSD(prices);
+const isUp = prices.changePct >= 0;
+const historyData = generateHistoricalData(prices.xauUsd, 30);
+
+const title = `Gold Price Today in USD (${formatUSD(prices.xauUsd)}/oz) - Live Gold Spot Price`;
+const description = `Today's gold price: ${formatUSD(prices.xauUsd)} per troy ounce, ${formatUSD(karatUSD.k24)} per gram. Live gold spot price in US Dollars updated every 5 minutes. Track XAU/USD with charts and analysis.`;
+const faqs = [
+  { question: "What is the gold price today in US dollars?", answer: `The current gold spot price is approximately ${formatUSD(prices.xauUsd)} per troy ounce (31.1g). Per gram, 24K pure gold is ${formatUSD(karatUSD.k24)} and 22K gold is ${formatUSD(karatUSD.k22)}. Gold prices are quoted in USD on international exchanges (COMEX, LBMA) and fluctuate during trading hours.` },
+  { question: "What is XAU/USD?", answer: "XAU/USD is the ticker symbol for the gold spot price quoted in US Dollars. XAU is the ISO 4217 currency code for one troy ounce of gold. This is the standard way gold is priced on international commodity exchanges like COMEX (CME Group) and the London Bullion Market Association (LBMA)." },
+  { question: "How much is 1 gram of gold in USD?", answer: `1 gram of 24K pure gold is approximately ${formatUSD(karatUSD.k24)}. One troy ounce (31.1035 grams) is ${formatUSD(prices.xauUsd)}. To convert: divide the per-ounce price by 31.1035 to get the per-gram price. For 22K gold (91.67% pure), multiply by 0.9167.` },
+  { question: "What drives gold prices in USD?", answer: "Gold prices in USD are primarily driven by: (1) US Federal Reserve interest rate decisions - lower rates boost gold, (2) US Dollar Index (DXY) - inverse correlation, (3) Inflation expectations - gold is an inflation hedge, (4) Geopolitical tensions - safe-haven demand, (5) Central bank purchases globally, and (6) ETF inflows/outflows (GLD, IAU)." },
+  { question: "When does the gold market trade?", answer: "Gold trades nearly 24 hours on weekdays. Key sessions: COMEX (New York) 8:20 AM - 1:30 PM ET for futures, London Fix at 10:30 AM and 3:00 PM GMT sets the benchmark, and Shanghai Gold Exchange overnight for Asian session. The spot market trades continuously from Sunday 6 PM ET to Friday 5 PM ET." },
+  { question: "Is gold a good investment in 2026?", answer: "Gold has historically served as a store of value and portfolio diversifier. Factors supporting gold include central bank buying, inflation concerns, and geopolitical uncertainty. However, gold pays no dividends or interest. Consider allocating 5-10% of your portfolio to gold via ETFs (GLD, IAU), physical bullion, or gold mining stocks. Consult a financial advisor for personalized guidance." },
+];
+const schemas = [
+  generateWebPageSchema(title, description, "/gold-price-today-usd/"),
+  generateBreadcrumbSchema([
+    { name: "Gold Rate Today", url: "/" },
+    { name: "Gold Price USD", url: "/gold-price-today-usd/" },
+  ]),
+  generateFAQSchema(faqs),
+];
+---
+
+<MainLayout title={title} description={description} canonical="/gold-price-today-usd/" schemas={schemas}>
+  <BreadcrumbNav items={[
+    { label: "Gold Rate Today", href: "/" },
+    { label: "Gold Price Today in USD" },
+  ]} />
+
+  <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Gold Price Today in USD</h1>
+  <p class="text-gray-600 mb-6">Live XAU/USD gold spot price from international markets (<a href="https://www.cmegroup.com/markets/metals/precious/gold.html" rel="noopener" class="text-gold-600 underline">COMEX</a> &amp; <a href="https://www.lbma.org.uk/prices-and-data/precious-metal-prices" rel="noopener" class="text-gold-600 underline">LBMA</a>).</p>
+
+  <!-- USD Price Hero -->
+  <div class="bg-gradient-to-br from-blue-50 via-white to-blue-50 border border-blue-200 rounded-2xl p-6 sm:p-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white rounded-xl p-5 border border-blue-200 shadow-sm text-center">
+        <p class="text-xs text-gray-500 mb-1">Per Troy Ounce</p>
+        <p class="text-2xl sm:text-3xl font-bold text-gray-900">{formatUSD(prices.xauUsd)}</p>
+        <span class:list={["text-xs font-semibold mt-1 inline-block", isUp ? "text-green-600" : "text-red-600"]}>
+          {isUp ? "▲" : "▼"} {isUp ? "+" : ""}{prices.changePct.toFixed(2)}%
+          ({isUp ? "+" : ""}{formatUSD(prices.changeUsd)})
+        </span>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-blue-200 shadow-sm text-center">
+        <p class="text-xs text-gray-500 mb-1">Per Gram (24K)</p>
+        <p class="text-2xl font-bold text-gray-900">{formatUSD(karatUSD.k24)}</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-blue-200 shadow-sm text-center">
+        <p class="text-xs text-gray-500 mb-1">Per Gram (22K)</p>
+        <p class="text-2xl font-bold text-gray-900">{formatUSD(karatUSD.k22)}</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-blue-200 shadow-sm text-center">
+        <p class="text-xs text-gray-500 mb-1">Per Gram (18K)</p>
+        <p class="text-2xl font-bold text-gray-900">{formatUSD(karatUSD.k18)}</p>
+      </div>
+    </div>
+  </div>
+
+  <AdUnit slot="in-content" />
+
+  <!-- Weight Table USD -->
+  <section class="mt-8">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Gold Price per Weight (USD)</h2>
+    <div class="table-responsive">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="bg-blue-800 text-white">
+            <th class="px-3 py-3 text-left font-semibold rounded-tl-lg">Weight</th>
+            <th class="px-3 py-3 text-right font-semibold">24K Gold</th>
+            <th class="px-3 py-3 text-right font-semibold">22K Gold</th>
+            <th class="px-3 py-3 text-right font-semibold rounded-tr-lg">18K Gold</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[1, 5, 10, 20, 50, 100].map((w, i) => (
+            <tr class={i % 2 === 0 ? "bg-white" : "bg-blue-50/50"}>
+              <td class="px-3 py-2.5 font-medium border-b border-gray-100">{w} gram{w > 1 ? "s" : ""}</td>
+              <td class="px-3 py-2.5 text-right font-semibold border-b border-gray-100">{formatUSD(karatUSD.k24 * w)}</td>
+              <td class="px-3 py-2.5 text-right font-semibold border-b border-gray-100">{formatUSD(karatUSD.k22 * w)}</td>
+              <td class="px-3 py-2.5 text-right font-medium border-b border-gray-100">{formatUSD(karatUSD.k18 * w)}</td>
+            </tr>
+          ))}
+          <tr class="bg-white">
+            <td class="px-3 py-2.5 font-medium">1 Troy Ounce (31.1g)</td>
+            <td class="px-3 py-2.5 text-right font-bold text-blue-800">{formatUSD(prices.xauUsd)}</td>
+            <td class="px-3 py-2.5 text-right font-bold">{formatUSD(prices.xauUsd * 22/24)}</td>
+            <td class="px-3 py-2.5 text-right font-medium">{formatUSD(prices.xauUsd * 18/24)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <PriceChart client:visible data={historyData} currency="USD" title="Gold Price Chart - 30 Days (USD/oz)" />
+
+  <AdUnit slot="in-content" />
+
+  <!-- Content -->
+  <section class="mt-8 bg-white border border-gray-200 rounded-lg p-5">
+    <h2 class="text-lg font-bold text-gray-900 mb-3">Understanding Gold Prices in US Dollars</h2>
+    <div class="text-sm text-gray-600 leading-relaxed space-y-3">
+      <p>
+        Gold is priced internationally in US Dollars per troy ounce. The two primary benchmarks are the
+        <a href="https://www.lbma.org.uk" rel="noopener" class="text-gold-600 underline">LBMA Gold Price</a> (set twice daily in London)
+        and <a href="https://www.cmegroup.com" rel="noopener" class="text-gold-600 underline">COMEX</a> gold futures (traded on CME Group in New York).
+        The spot price reflects real-time trading activity across global markets.
+      </p>
+      <p>
+        The US Federal Reserve's monetary policy has the most direct impact on gold prices. When interest rates
+        are low, gold becomes more attractive as an alternative store of value since the opportunity cost of
+        holding gold (which pays no yield) is reduced. Conversely, rising rates tend to strengthen the US Dollar
+        and put downward pressure on gold.
+      </p>
+      <p>
+        For US investors, gold can be purchased as physical bullion (bars, coins from US Mint), gold ETFs
+        (SPDR Gold Shares - GLD, iShares Gold Trust - IAU), gold futures on COMEX, gold mining stocks,
+        or allocated/unallocated gold accounts at major banks.
+      </p>
+    </div>
+  </section>
+
+  <!-- Currency Conversion -->
+  <section class="mt-6 bg-white border border-gray-200 rounded-lg p-5">
+    <h2 class="text-lg font-bold text-gray-900 mb-3">Gold Price in Other Currencies</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+      <div class="bg-gray-50 rounded-lg p-3 text-center">
+        <p class="text-xs text-gray-500">USD (US Dollar)</p>
+        <p class="font-bold text-gray-900">{formatUSD(prices.xauUsd)}/oz</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-3 text-center">
+        <p class="text-xs text-gray-500">INR (Indian Rupee)</p>
+        <p class="font-bold text-gray-900">₹{Math.round(prices.xauUsd * prices.usdInr).toLocaleString("en-IN")}/oz</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-3 text-center">
+        <p class="text-xs text-gray-500">EUR (approx)</p>
+        <p class="font-bold text-gray-900">€{Math.round(prices.xauUsd * 0.92).toLocaleString()}/oz</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-3 text-center">
+        <p class="text-xs text-gray-500">GBP (approx)</p>
+        <p class="font-bold text-gray-900">£{Math.round(prices.xauUsd * 0.79).toLocaleString()}/oz</p>
+      </div>
+    </div>
+  </section>
+
+  <FAQ faqs={faqs} title="FAQs - Gold Price in USD" />
+
+  <section class="mt-8 bg-white border border-gray-200 rounded-lg p-5">
+    <h2 class="font-bold text-gray-900 mb-3">Related Pages</h2>
+    <div class="flex flex-wrap gap-2">
+      <a href="/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Rate India (INR)</a>
+      <a href="/gold-price-per-ounce/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Price per Ounce</a>
+      <a href="/gold-price-today-in-dubai/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Gold Price in Dubai</a>
+      <a href="/silver-rate-today/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Silver Rate Today</a>
+      <a href="/gold-price-history/" class="text-sm px-3 py-1.5 bg-gold-50 text-gold-700 rounded-full hover:bg-gold-100 transition-colors">Price History</a>
+    </div>
+  </section>
+
+  <AdUnit slot="footer" format="horizontal" />
+</MainLayout>

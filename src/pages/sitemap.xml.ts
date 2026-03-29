@@ -21,6 +21,9 @@ export const GET: APIRoute = () => {
     { url: "/24-carat-gold-rate-today/", priority: "0.9", changefreq: "hourly" },
     { url: "/gold-rate-today-per-tola/", priority: "0.8", changefreq: "daily" },
     { url: "/gold-price-prediction/", priority: "0.7", changefreq: "weekly" },
+    { url: "/gold-price-today-usd/", priority: "0.9", changefreq: "hourly" },
+    { url: "/gold-price-per-ounce/", priority: "0.9", changefreq: "hourly" },
+    { url: "/gold-price-today-in-dubai/", priority: "0.8", changefreq: "hourly" },
     { url: "/about/", priority: "0.3", changefreq: "monthly" },
   ];
 
