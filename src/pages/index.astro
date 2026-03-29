@@ -6,16 +6,18 @@ import BreadcrumbNav from "../components/BreadcrumbNav.astro";
 import LivePriceLoader from "../components/LivePriceLoader.tsx";
 import PriceChart from "../components/PriceChart.tsx";
 import CityRatesTable from "../components/CityRatesTable.astro";
-import { generateWebPageSchema, generateFAQSchema, generateBreadcrumbSchema } from "../utils/schema";
+import { generateWebPageSchema, generateFAQSchema, generateBreadcrumbSchema, generateOrganizationSchema, generateWebSiteSchema } from "../utils/schema";
 import { mainPageFAQs } from "../data/faqs";
 import { generateHistoricalData } from "../utils/priceCalculator";
 
 const title = "Gold Rate Today - Live 22K & 24K Gold Price in India";
-const description = "Today's live gold rate in India. Track 22K, 24K, 18K gold prices per gram with city-wise rates for 80+ Indian cities. Updated every 5 minutes from international markets.";
+const description = "Today's live gold rate in India. Track 22K, 24K, 18K gold prices per gram with city-wise rates for 80+ Indian cities. Updated every 5 minutes from IBJA and international markets.";
 
 const historyData = generateHistoricalData(3050, 30);
 
 const schemas = [
+  generateOrganizationSchema(),
+  generateWebSiteSchema(),
   generateWebPageSchema(title, description, "/"),
   generateFAQSchema(mainPageFAQs),
   generateBreadcrumbSchema([{ name: "Gold Rate Today", url: "/" }]),
@@ -33,6 +35,12 @@ const schemas = [
       <p class="text-sm text-gray-500 mt-2">Live 22K & 24K Gold Prices per Gram & per 10 Grams</p>
     </div>
     <LivePriceLoader client:load />
+    <noscript>
+      <div class="text-center py-4 text-gray-600">
+        <p>Enable JavaScript to see live gold prices. Current approximate rates: 24K gold ~₹8,192/gram, 22K gold ~₹7,509/gram.</p>
+        <p class="text-sm mt-1">Source: <a href="https://www.ibja.co" class="text-gold-600 underline">IBJA</a> and international spot markets.</p>
+      </div>
+    </noscript>
   </section>
 
   <script>
@@ -56,8 +64,8 @@ const schemas = [
         <h3 class="font-semibold text-gray-900 mb-2">How is the Gold Rate Determined?</h3>
         <p class="text-sm text-gray-600 leading-relaxed">
           The gold rate in India is primarily determined by the India Bullion and Jewellers Association (IBJA).
-          It is calculated based on the international spot price (LBMA London Fix), converted using the USD/INR
-          exchange rate, and adjusted for customs duty (15%) and GST (3%). The IBJA publishes opening and closing
+          It is calculated based on the international spot price (<a href="https://www.lbma.org.uk" rel="noopener" class="text-gold-600 underline">LBMA</a> London Fix), converted using the USD/INR
+          exchange rate, and adjusted for customs duty (15%) and GST (3%). The <a href="https://www.ibja.co" rel="noopener" class="text-gold-600 underline">IBJA</a> publishes opening and closing
           rates each business day that serve as the benchmark for jewelers across the country.
         </p>
       </div>

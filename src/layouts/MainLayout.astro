@@ -15,22 +15,15 @@ interface Props {
 }
 
 const props = Astro.props;
+const today = new Date().toISOString().split("T")[0];
 ---
 
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="en-IN" dir="ltr">
   <head>
     <SEOHead {...props} />
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LN4S018T01"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-LN4S018T01');
-    </script>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5473625991326486" crossorigin="anonymous"></script>
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
   </head>
   <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
     <Header />
@@ -38,11 +31,16 @@ const props = Astro.props;
       <slot />
     </main>
     <Footer />
-    <!-- AdSense auto ads push -->
+
+    <!-- Analytics & Ads (deferred, non-blocking) -->
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-LN4S018T01"></script>
     <script>
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-LN4S018T01');
     </script>
-    <!-- Cloudflare Web Analytics -->
+    <script defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5473625991326486" crossorigin="anonymous"></script>
     <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "0175ea0990a542999ddc9284dbb44dab"}'></script>
   </body>
 </html>

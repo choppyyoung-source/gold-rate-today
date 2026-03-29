@@ -5,12 +5,9 @@ export const prerender = true;
 export const GET: APIRoute = () => {
   const content = `User-agent: *
 Allow: /
-
-Sitemap: https://goldrateslive.com/sitemap.xml
-
-# Crawl-delay for respectful crawling
-User-agent: *
 Crawl-delay: 1
+
+Sitemap: https://gold-rate-today.pages.dev/sitemap.xml
 `;
 
   return new Response(content, {

@@ -14,12 +14,12 @@ const {
   description,
   canonical,
   schemas = [],
-  ogImage = "/og-image.jpg",
+  ogImage = "/og-image.svg",
   ogType = "website",
   noindex = false,
 } = Astro.props;
 
-const siteUrl = "https://goldrateslive.com";
+const siteUrl = "https://gold-rate-today.pages.dev";
 const fullUrl = `${siteUrl}${canonical}`;
 const fullOgImage = ogImage.startsWith("http") ? ogImage : `${siteUrl}${ogImage}`;
 ---
@@ -30,7 +30,7 @@ const fullOgImage = ogImage.startsWith("http") ? ogImage : `${siteUrl}${ogImage}
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta charset="utf-8" />
 <meta name="google-adsense-account" content="ca-pub-5473625991326486" />
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow, max-snippet:-1, max-image-preview:large"} />
 <link rel="canonical" href={fullUrl} />
 
 <!-- Open Graph / Facebook -->
@@ -52,11 +52,13 @@ const fullOgImage = ogImage.startsWith("http") ? ogImage : `${siteUrl}${ogImage}
 <!-- Additional SEO -->
 <meta name="theme-color" content="#d4a843" />
 <meta name="author" content="Gold Rates Live" />
+<meta name="publisher" content="Gold Rates Live" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
 <!-- Preconnect -->
 <link rel="preconnect" href="https://gold-api.com" />
-<link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+<link rel="dns-prefetch" href="https://gold-api.com" />
+<link rel="preconnect" href="https://www.googletagmanager.com" />
 
 <!-- JSON-LD Structured Data -->
 {schemas.map((schema) => (

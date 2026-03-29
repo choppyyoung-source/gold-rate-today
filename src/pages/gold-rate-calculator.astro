@@ -6,7 +6,7 @@ import FAQ from "../components/FAQ.astro";
 import Calculator from "../components/Calculator.tsx";
 import { getKaratPricesINR } from "../utils/priceCalculator";
 import { formatINR } from "../utils/formatters";
-import { generateWebPageSchema, generateBreadcrumbSchema, generateFAQSchema } from "../utils/schema";
+import { generateWebPageSchema, generateBreadcrumbSchema, generateFAQSchema, generateHowToSchema } from "../utils/schema";
 
 const prices = { xauUsd: 3050, xauInr: 254675, usdInr: 83.5, changeUsd: 12.5, changePct: 0.41, xagUsd: 33.5, silverChangeUsd: 0.25, silverChangePct: 0.75, timestamp: Date.now() };
 const karatINR = getKaratPricesINR(prices);
@@ -26,6 +26,7 @@ const schemas = [
     { name: "Gold Calculator", url: "/gold-rate-calculator/" },
   ]),
   generateFAQSchema(faqs),
+  generateHowToSchema(),
 ];
 ---
 

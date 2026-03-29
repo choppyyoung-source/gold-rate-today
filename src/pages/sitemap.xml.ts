@@ -3,7 +3,7 @@ import { cities } from "../data/cities";
 
 export const prerender = true;
 
-const SITE_URL = "https://goldrateslive.com";
+const SITE_URL = "https://gold-rate-today.pages.dev";
 
 function formatDate(date: Date): string {
   return date.toISOString().split("T")[0]!;
